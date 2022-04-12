@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Graph author="luren" created="Mon Nov 22 18:05:46 PST 2021" guiVersion="5.12.1.2" id="1637633408099" licenseCode="CLP1DNORTH77515235EX" name="Graph1" showComponentDetails="true">
+<Global>
+<Metadata id="Metadata3">
+<Record fieldDelimiter="|" name="Aggregation" recordDelimiter="\r\n" type="delimited">
+<Field name="ParkId" type="string"/>
+<Field name="TotalVisitor" type="integer"/>
+</Record>
+</Metadata>
+<Metadata id="Metadata4">
+<Record fieldDelimiter=";" name="nationalparks" recordDelimiter="\n" type="delimited">
+<Field name="ParkId" size="255" type="string"/>
+<Field name="Ranking" size="11" type="integer"/>
+<Field name="ParkName" size="255" type="string"/>
+</Record>
+</Metadata>
+<Metadata id="Metadata5" previewAttachmentCharset="UTF-8">
+<Record fieldDelimiter="|" name="park_ranking_visitor2020" previewAttachmentCharset="UTF-8" recordDelimiter="\r\n" type="delimited">
+<Field name="ParkId" type="string"/>
+<Field name="ParkName" type="string"/>
+<Field name="Ranking" type="integer"/>
+<Field name="Visitor_2020" trim="true" type="integer"/>
+</Record>
+</Metadata>
+<Metadata id="Metadata0">
+<Record fieldDelimiter="," label="park visitor" name="park_visitor" previewAttachment="${DATAIN_DIR}/park visitor.csv" previewAttachmentCharset="UTF-8" quoteChar="&quot;" quotedStrings="true" recordDelimiter="\r\n" skipSourceRows="15" type="delimited">
+<Field name="ParkId" type="string"/>
+<Field format="yyyy" name="Year" type="date"/>
+<Field eofAsDelimiter="true" name="Visitors" type="integer"/>
+</Record>
+</Metadata>
+<Metadata id="Metadata1">
+<Record fieldDelimiter="," label="Park_visitor - park_visitor_2020" name="Park_visitor_park_visitor_2020" previewAttachment="${DATAIN_DIR}/Park_visitor - park_visitor_2020.csv" previewAttachmentCharset="UTF-8" quoteChar="both" quotedStrings="false" recordDelimiter="\r\n" skipSourceRows="1" type="delimited">
+<Field name="ParkName" type="string"/>
+<Field name="ParkId" type="string"/>
+<Field name="Value" type="integer"/>
+<Field eofAsDelimiter="true" name="PercentOfTotal" type="string"/>
+</Record>
+</Metadata>
+<Metadata id="Metadata2">
+<Record fieldDelimiter="," label="Park_visitor - park_visitor_2020" name="Park_visitor_park_visitor_2020" previewAttachment="${DATAIN_DIR}/Park_visitor - park_visitor_2020.csv" previewAttachmentCharset="UTF-8" quoteChar="both" quotedStrings="false" recordDelimiter="\r\n" skipSourceRows="1" type="delimited">
+<Field name="ParkName" type="string"/>
+<Field name="ParkId" type="string"/>
+<Field name="Value" type="integer"/>
+<Field eofAsDelimiter="true" name="PercentOfTotal" type="string"/>
+</Record>
+</Metadata>
+<Connection database="MYSQL" dbURL="jdbc:mysql://localhost:3306/NationalPark" id="JDBC0" jdbcSpecific="MYSQL" name="NationalParkApplication" password="password" type="JDBC" user="root2"/>
+<GraphParameters>
+<GraphParameterFile fileURL="workspace.prm"/>
+</GraphParameters>
+<Dictionary/>
+</Global>
+<Phase number="0">
+<Node dbConnection="JDBC0" guiName="DatabaseReader" guiX="219" guiY="427" id="DATABASE_READER" type="DB_INPUT_TABLE">
+<attr name="sqlQuery"><![CDATA[SELECT ParkId, Ranking, ParkName
+FROM nationalparks]]></attr>
+</Node>
+<Node guiName="ExtHashJoin" guiX="567" guiY="325" id="EXT_HASH_JOIN" joinKey="$ParkId=$ParkId" type="EXT_HASH_JOIN">
+<attr name="transform"><![CDATA[//#CTL2
+
+// Transforms input record into output record.
+function integer transform() {
+	$out.0.ParkId = $in.0.ParkId;
+	$out.0.Visitor_2020 = $in.0.Value;
+	$out.0.Ranking = $in.1.Ranking;
+	$out.0.ParkName = $in.1.ParkName;
+
+	return ALL;
+}
+
+// Called during component initialization.
+// function boolean init() {}
+
+// Called during each graph run before the transform is executed. May be used to allocate and initialize resources
+// required by the transform. All resources allocated within this method should be released
+// by the postExecute() method.
+// function void preExecute() {}
+
+// Called only if transform() throws an exception.
+// function integer transformOnError(string errorMessage, string stackTrace) {}
+
+// Called during each graph run after the entire transform was executed. Should be used to free any resources
+// allocated within the preExecute() method.
+// function void postExecute() {}
+
+// Called to return a user-defined error message when an error occurs.
+// function string getMessage() {}
+]]></attr>
+</Node>
+<Node existingSheetsActions="REMOVE_SHEETS" fileURL="${DATAOUT_DIR}/park_visitor_by_2020.xlsx" guiName="SpreadsheetDataWriter" guiX="818" guiY="308" id="SPREADSHEET_DATA_WRITER" type="SPREADSHEET_WRITER" writeMode="OVERWRITE_SHEET_IN_MEMORY"/>
+<Node dataPolicy="lenient" fileURL="${DATAIN_DIR}/Park_visitor - park_visitor_2020.csv" guiName="UniversalDataReader" guiX="202" guiY="249" id="UNIVERSAL_DATA_READER" skipFirstLine="true" trim="false" type="DATA_READER"/>
+<Edge fromNode="DATABASE_READER:0" guiBendpoints="" guiRouter="Manhattan" id="Edge2" inPort="Port 1 (slave)" metadata="Metadata4" outPort="Port 0 (out)" toNode="EXT_HASH_JOIN:1"/>
+<Edge fromNode="EXT_HASH_JOIN:0" guiBendpoints="" guiRouter="Manhattan" id="Edge4" inPort="Port 0 (input)" metadata="Metadata5" outPort="Port 0 (out)" toNode="SPREADSHEET_DATA_WRITER:0"/>
+<Edge fromNode="UNIVERSAL_DATA_READER:0" guiBendpoints="" guiRouter="Manhattan" id="Edge1" inPort="Port 0 (driver)" metadata="Metadata2" outPort="Port 0 (output)" toNode="EXT_HASH_JOIN:0"/>
+</Phase>
+</Graph>

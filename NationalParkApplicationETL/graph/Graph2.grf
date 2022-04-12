@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Graph author="luren" created="Mon Nov 22 18:05:46 PST 2021" guiVersion="5.12.1.2" id="1637638917867" licenseCode="CLP1DNORTH77515235EX" name="Graph2" showComponentDetails="true">
+<Global>
+<Metadata id="Metadata4">
+<Record fieldDelimiter="|" name="averageRanking_state" recordDelimiter="\r\n" type="delimited">
+<Field name="State" type="string"/>
+<Field name="Rank" type="integer"/>
+</Record>
+</Metadata>
+<Metadata id="Metadata2">
+<Record fieldDelimiter="|" name="Join" previewAttachmentCharset="UTF-8" recordDelimiter="\r\n" type="delimited">
+<Field name="State" type="string"/>
+<Field name="StateTotalVisitor" type="integer"/>
+<Field name="Ranking" type="integer"/>
+</Record>
+</Metadata>
+<Metadata id="Metadata1">
+<Record fieldDelimiter=";" name="nationalparks" recordDelimiter="\n" type="delimited">
+<Field name="ParkId" size="255" type="string"/>
+<Field name="Ranking" size="11" type="integer"/>
+<Field name="ParkName" size="255" type="string"/>
+</Record>
+</Metadata>
+<Metadata id="Metadata3">
+<Record fieldDelimiter=";" name="nationalparks" recordDelimiter="\n" type="delimited">
+<Field name="ParkId" size="255" type="string"/>
+<Field name="State" size="255" type="string"/>
+<Field name="Ranking" size="11" type="integer"/>
+<Field name="ParkName" size="255" type="string"/>
+</Record>
+</Metadata>
+<Metadata id="Metadata5" previewAttachmentCharset="UTF-8">
+<Record fieldDelimiter="|" name="Parkranking_and_state" previewAttachmentCharset="UTF-8" recordDelimiter="\r\n" type="delimited">
+<Field name="State" type="string"/>
+<Field name="StateRecreationVisitor" type="integer"/>
+<Field name="Rank" trim="true" type="integer"/>
+</Record>
+</Metadata>
+<Metadata id="Metadata0">
+<Record fieldDelimiter="," label="Visitation By State" name="Visitation_By_State" previewAttachment="${DATAIN_DIR}/Visitation By State.csv" previewAttachmentCharset="UTF-8" quoteChar="&quot;" quotedStrings="true" recordDelimiter="\r\n" skipSourceRows="1" type="delimited">
+<Field label="﻿State" name="State" type="string"/>
+<Field label="RecVisitors1" name="RecVisitors1" type="integer"/>
+<Field eofAsDelimiter="true" label="PercentageChange" name="PercentageChange" type="string"/>
+</Record>
+</Metadata>
+<Connection database="MYSQL" dbURL="jdbc:mysql://localhost:3306/nationalpark" id="JDBC0" jdbcSpecific="MYSQL" name="NationalParkApplication" password="password" type="JDBC" user="root2"/>
+<GraphParameters>
+<GraphParameterFile fileURL="workspace.prm"/>
+</GraphParameters>
+<Dictionary/>
+</Global>
+<Phase number="0">
+<Node aggregateKey="State" equalNULL="false" guiName="Aggregate" guiX="482" guiY="482" id="AGGREGATE" mapping="$State:=$State;$Rank:=avg($Ranking);" sorted="false" type="AGGREGATE"/>
+<Node autoCommit="true" dataPolicy="lenient" dbConnection="JDBC0" guiName="DatabaseReader" guiX="216" guiY="386" id="DATABASE_READER" printStatements="true" type="DB_INPUT_TABLE">
+<attr name="sqlQuery"><![CDATA[Select ParkId,State,Ranking, ParkName
+From nationalparks]]></attr>
+</Node>
+<Node enabled="enabled" guiName="ExtHashJoin" guiX="507" guiY="290" id="EXT_HASH_JOIN" joinKey="$State=$State" type="EXT_HASH_JOIN">
+<attr name="transform"><![CDATA[//#CTL2
+
+// Transforms input record into output record.
+function integer transform() {
+	$out.0.State = $in.0.State;
+	$out.0.StateRecreationVisitor = $in.0.RecVisitors1;
+	$out.0.Rank = $in.1.Rank;
+
+	return ALL;
+}
+
+// Called during component initialization.
+// function boolean init() {}
+
+// Called during each graph run before the transform is executed. May be used to allocate and initialize resources
+// required by the transform. All resources allocated within this method should be released
+// by the postExecute() method.
+// function void preExecute() {}
+
+// Called only if transform() throws an exception.
+// function integer transformOnError(string errorMessage, string stackTrace) {}
+
+// Called during each graph run after the entire transform was executed. Should be used to free any resources
+// allocated within the preExecute() method.
+// function void postExecute() {}
+
+// Called to return a user-defined error message when an error occurs.
+// function string getMessage() {}
+]]></attr>
+</Node>
+<Node enabled="enabled" existingSheetsActions="REMOVE_SHEETS" fileURL="${DATAOUT_DIR}/park_visitor_by_state.xlsx" guiName="SpreadsheetDataWriter" guiX="814" guiY="290" id="SPREADSHEET_DATA_WRITER" sheet="Sheet0" type="SPREADSHEET_WRITER" writeMode="OVERWRITE_SHEET_IN_MEMORY">
+<attr name="mapping"><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mapping>
+    <globalAttributes>
+        <orientation>VERTICAL</orientation>
+        <step>1</step>
+        <writeHeader>true</writeHeader>
+    </globalAttributes>
+    <defaultSkip>1</defaultSkip>
+    <headerGroups>
+        <headerGroup skip="1">
+            <cloverField>State</cloverField>
+            <headerRanges>
+                <headerRange begin="A1"/>
+            </headerRanges>
+        </headerGroup>
+        <headerGroup skip="1">
+            <cloverField>StateRecreationVisitor</cloverField>
+            <headerRanges>
+                <headerRange begin="B1"/>
+            </headerRanges>
+        </headerGroup>
+        <headerGroup skip="1">
+            <cloverField>Rank</cloverField>
+            <headerRanges>
+                <headerRange begin="C1"/>
+            </headerRanges>
+        </headerGroup>
+    </headerGroups>
+</mapping>
+]]></attr>
+</Node>
+<Node dataPolicy="lenient" enabled="enabled" fileURL="${DATAIN_DIR}/Visitation By State.csv" guiName="UniversalDataReader" guiX="145" guiY="154" id="UNIVERSAL_DATA_READER" skipFirstLine="true" type="DATA_READER"/>
+<Edge fromNode="AGGREGATE:0" guiBendpoints="" guiRouter="Manhattan" id="Edge7" inPort="Port 1 (slave)" metadata="Metadata4" outPort="Port 0 (out)" toNode="EXT_HASH_JOIN:1"/>
+<Edge fromNode="DATABASE_READER:0" guiBendpoints="" guiRouter="Manhattan" id="Edge3" inPort="Port 0 (in)" metadata="Metadata3" outPort="Port 0 (out)" toNode="AGGREGATE:0"/>
+<Edge fromNode="EXT_HASH_JOIN:0" guiBendpoints="" guiRouter="Manhattan" id="Edge8" inPort="Port 0 (input)" metadata="Metadata5" outPort="Port 0 (out)" toNode="SPREADSHEET_DATA_WRITER:0"/>
+<Edge fromNode="UNIVERSAL_DATA_READER:0" guiBendpoints="" guiRouter="Manhattan" id="Edge0" inPort="Port 0 (driver)" metadata="Metadata0" outPort="Port 0 (output)" toNode="EXT_HASH_JOIN:0"/>
+</Phase>
+</Graph>

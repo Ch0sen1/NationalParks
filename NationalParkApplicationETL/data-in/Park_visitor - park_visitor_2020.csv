@@ -1,0 +1,56 @@
+ParkName,ParkId,Value,PercentOfTotal
+Great Smoky Mountains NP,GRSM,12095720,17.81%
+Yellowstone NP,YELL,3806306,5.60%
+Zion NP,ZION,3591254,5.29%
+Rocky Mountain NP,ROMO,3305199,4.87%
+Grand Teton NP,GRTE,3289638,4.84%
+Grand Canyon NP,GRCA,2897098,4.26%
+Cuyahoga Valley NP,CUVA,2755628,4.06%
+Acadia NP,ACAD,2669034,3.93%
+Olympic NP,OLYM,2499177,3.68%
+Joshua Tree NP,JOTR,2399542,3.53%
+Yosemite NP,YOSE,2268313,3.34%
+Glacier NP,GLAC,1698864,2.50%
+Shenandoah NP,SHEN,1666265,2.45%
+Bryce Canyon NP,BRCA,1464655,2.16%
+Hot Springs NP,HOSP,1348215,1.98%
+Arches NP,ARCH,1238083,1.82%
+Mount Rainier NP,MORA,1160754,1.71%
+Capitol Reef NP,CARE,981038,1.44%
+Badlands NP,BADL,916932,1.35%
+Death Valley NP,DEVA,820023,1.21%
+Sequoia NP,SEKI,796086,1.17%
+Saguaro NP,SAGU,762226,1.12%
+Everglades NP,EVER,702319,1.03%
+Crater Lake NP,CRLA,670500,0.99%
+Hawaii Volcanoes NP,HAVO,589775,0.87%
+Theodore Roosevelt NP,THRO,551303,0.81%
+Lassen Volcanic NP,LAVO,542274,0.80%
+Canyonlands NP,CANY,493914,0.73%
+Great Sand Dunes NP & PRES,GRSA,461532,0.68%
+Wind Cave NP,WICA,448405,0.66%
+Biscayne NP,BISC,402770,0.59%
+Big Bend NP,BIBE,393907,0.58%
+Petrified Forest NP,PEFO,384483,0.57%
+Black Canyon of the Gunnison NP,BLCA,341620,0.50%
+Haleakala NP,HALE,319147,0.47%
+Mammoth Cave NP,MACA,290392,0.43%
+Mesa Verde NP,MEVE,287477,0.42%
+Redwood NP,REDW,265177,0.39%
+Carlsbad Caverns NP,CAVE,183835,0.27%
+Channel Islands NP,CHIS,167290,0.25%
+Pinnacles NP,PINN,165740,0.24%
+Guadalupe Mountains NP,GUMO,151256,0.22%
+Great Basin NP,GRBA,120248,0.18%
+Congaree NP,CONG,119306,0.18%
+Kenai Fjords NP,KEFJ,115882,0.17%
+Denali NP & PRES,DENA,54850,0.08%
+Katmai NP & PRES,KATM,51511,0.08%
+Dry Tortugas NP,DRTO,48543,0.07%
+North Cascades NP,NOCA,30885,0.05%
+Wrangell-St. Elias NP & PRES,WRST,16655,0.02%
+Kobuk Valley NP,KOVA,11185,0.02%
+Isle Royale NP,ISRO,6493,0.01%
+Glacier Bay NP & PRES,GLBA,5748,0.01%
+Lake Clark NP & PRES,LACL,4948,0.01%
+Gates of the Arctic NP & PRES,GAAR,2872,0.00%

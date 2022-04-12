@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Graph author="liushijie" created="Wed Dec 01 16:14:45 PST 2021" guiVersion="5.12.1.2" id="1638423158935" licenseCode="Unlicensed" name="Graph3" showComponentDetails="true">
+<Global>
+<Metadata id="Metadata3" previewAttachmentCharset="UTF-8">
+<Record fieldDelimiter="|" name="count_by_gdp_state" previewAttachmentCharset="UTF-8" recordDelimiter="\n" type="delimited">
+<Field name="State" type="string"/>
+<Field length="12" name="GDP" scale="2" trim="true" type="decimal"/>
+<Field name="Count" trim="true" type="integer"/>
+</Record>
+</Metadata>
+<Metadata id="Metadata2">
+<Record fieldDelimiter="|" name="count_by_state" previewAttachmentCharset="UTF-8" recordDelimiter="\n" type="delimited">
+<Field name="State" type="string"/>
+<Field name="Count" type="integer"/>
+</Record>
+</Metadata>
+<Metadata id="Metadata0">
+<Record fieldDelimiter="," name="gdpByState" previewAttachment="${DATAIN_DIR}/gdpByState.csv" previewAttachmentCharset="UTF-8" quoteChar="both" quotedStrings="false" recordDelimiter="\r\n" skipSourceRows="0" type="delimited">
+<Field name="State" type="string"/>
+<Field name="GDP" scale="2" type="decimal"/>
+<Field eofAsDelimiter="true" name="Ranking" type="string"/>
+</Record>
+</Metadata>
+<Metadata id="Metadata1">
+<Record fieldDelimiter=";" name="nationalparks" previewAttachmentCharset="UTF-8" recordDelimiter="\n" type="delimited">
+<Field name="ParkId" size="255" type="string"/>
+<Field name="State" size="255" type="string"/>
+<Field name="Ranking" size="11" type="integer"/>
+<Field name="ParkName" size="255" type="string"/>
+</Record>
+</Metadata>
+<Connection database="MYSQL" dbURL="jdbc:mysql://localhost:3306/NationalPark" id="JDBC0" jdbcSpecific="MYSQL" name="NationalPark" password="password" type="JDBC" user="root"/>
+<GraphParameters>
+<GraphParameterFile fileURL="workspace.prm"/>
+</GraphParameters>
+<Dictionary/>
+</Global>
+<Phase number="0">
+<Node aggregateKey="State" equalNULL="true" guiName="Aggregate" guiX="1008" guiY="644" id="AGGREGATE" mapping="$State:=$State;$Count:=count();" sorted="false" type="AGGREGATE"/>
+<Node autoCommit="true" dataPolicy="lenient" dbConnection="JDBC0" guiName="DatabaseReader" guiX="742" guiY="548" id="DATABASE_READER" printStatements="true" type="DB_INPUT_TABLE">
+<attr name="sqlQuery"><![CDATA[Select ParkId,State,Ranking, ParkName
+From nationalparks]]></attr>
+</Node>
+<Node enabled="enabled" guiName="ExtHashJoin" guiX="1033" guiY="452" id="EXT_HASH_JOIN" joinKey="$State=$State" joinType="leftOuter" type="EXT_HASH_JOIN">
+<attr name="transform"><![CDATA[//#CTL2
+
+// Transforms input record into output record.
+function integer transform() {
+	$out.0.State = $in.0.State;
+	$out.0.GDP = $in.0.GDP;
+	$out.0.Count = nvl($in.1.Count, 0);
+
+	return ALL;
+}
+
+// Called during component initialization.
+// function boolean init() {}
+
+// Called during each graph run before the transform is executed. May be used to allocate and initialize resources
+// required by the transform. All resources allocated within this method should be released
+// by the postExecute() method.
+// function void preExecute() {}
+
+// Called only if transform() throws an exception.
+// function integer transformOnError(string errorMessage, string stackTrace) {}
+
+// Called during each graph run after the entire transform was executed. Should be used to free any resources
+// allocated within the preExecute() method.
+// function void postExecute() {}
+
+// Called to return a user-defined error message when an error occurs.
+// function string getMessage() {}
+]]></attr>
+</Node>
+<Node dataPolicy="lenient" enabled="enabled" fileURL="${DATAIN_DIR}/gdpByState.csv" guiName="UniversalDataReader" guiX="671" guiY="316" id="UNIVERSAL_DATA_READER" skipFirstLine="false" trim="true" type="DATA_READER"/>
+<Edge fromNode="AGGREGATE:0" guiBendpoints="" guiRouter="Manhattan" id="Edge17" inPort="Port 1 (slave)" metadata="Metadata2" outPort="Port 0 (out)" toNode="EXT_HASH_JOIN:1"/>
+<Edge fromNode="DATABASE_READER:0" guiBendpoints="" guiRouter="Manhattan" id="Edge19" inPort="Port 0 (in)" metadata="Metadata1" outPort="Port 0 (out)" toNode="AGGREGATE:0"/>
+<Edge fromNode="EXT_HASH_JOIN:0" guiBendpoints="" guiRouter="Manhattan" id="Edge16" inPort="Port 0 (input)" metadata="Metadata3" outPort="Port 0 (out)" toNode="SPREADSHEET_DATA_WRITER:0"/>
+<Edge fromNode="UNIVERSAL_DATA_READER:0" guiBendpoints="" guiRouter="Manhattan" id="Edge20" inPort="Port 0 (driver)" metadata="Metadata0" outPort="Port 0 (output)" toNode="EXT_HASH_JOIN:0"/>
+</Phase>
+<Phase number="1">
+<Node enabled="enabled" existingSheetsActions="REMOVE_SHEETS" fileURL="${DATAOUT_DIR}/park_num_by_state_gdp.xlsx" guiName="SpreadsheetDataWriter" guiX="1340" guiY="452" id="SPREADSHEET_DATA_WRITER" sheet="Sheet0" type="SPREADSHEET_WRITER" writeMode="OVERWRITE_SHEET_IN_MEMORY">
+<attr name="mapping"><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mapping>
+    <globalAttributes>
+        <orientation>VERTICAL</orientation>
+        <step>1</step>
+        <writeHeader>true</writeHeader>
+    </globalAttributes>
+    <defaultSkip>1</defaultSkip>
+    <headerGroups>
+        <headerGroup skip="1">
+            <cloverField>State</cloverField>
+            <headerRanges>
+                <headerRange begin="A1"/>
+            </headerRanges>
+        </headerGroup>
+        <headerGroup skip="1">
+            <cloverField>GDP</cloverField>
+            <headerRanges>
+                <headerRange begin="B1"/>
+            </headerRanges>
+        </headerGroup>
+        <headerGroup skip="1">
+            <cloverField>Count</cloverField>
+            <headerRanges>
+                <headerRange begin="C1"/>
+            </headerRanges>
+        </headerGroup>
+    </headerGroups>
+</mapping>
+]]></attr>
+</Node>
+</Phase>
+</Graph>
